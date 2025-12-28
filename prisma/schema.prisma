@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  // url = env("DATABASE_URL") - Moved to prisma.config.ts
+  extensions = [vector]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  brand       String?
+  category    String
+  price       Decimal
+  currency    String   @default("USD")
+  imageUrl    String
+  productUrl  String
+  platform    String
+  styleTags   String[]
+  // Use Unsupported for vector type to enable pgvector logic via raw SQL or typed extensions
+  embedding   Unsupported("vector(1536)")? 
+  createdAt   DateTime @default(now())
+}
+
+model Analysis {
+  id          String   @id @default(uuid())
+  imageUrl    String
+  results     Json     // Stores the vision API output (category, color, etc.)
+  createdAt   DateTime @default(now())
+}
